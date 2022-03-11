@@ -1,0 +1,186 @@
+1. data BS boostrap permet d'afficher une fenetre.
+  
+  
+2. test exercice  composantDidMount dans app.js => appeller une api pour récupérer des infos et les mettre dans un composant
+// fetch('https://api.themoviedb.org/3/discover/movie?api_key=27d9429f794e96750e702e3f5507a88a')
+//.then(res => res.json())
+//.then((data)=> {
+//  console.log(data)
+//  const listNewMovies = data.results.map(movie => {
+//  const id  = {_id : movie.id}
+//  const url  = {img : movie.backdrop_path}
+//  const desc = {details : movie.overview}
+//  })
+//  this.setState({
+//   movies : data.results
+//  })
+//})
+
+3. //map = foreach mais comme c'est en react, foreach ne retourne rien, il faut donc utiliser map.
+Exemple :
+const data = {
+  results: [
+    {
+      id: 1,
+      original_title: "yuio"
+    },
+    {
+      id: 2,
+      original_title: "ghjkl"
+    },
+  ]
+}
+
+const response = {
+  headers: [],
+  body: data,
+  json() {
+    return JSON.parse(this.data);
+  }
+};
+
+// console.log(JSON.stringify(data));
+
+const movie = {
+  _id: data.results[0].id,
+  title: data.results[0].original_title
+}
+
+// console.log("before", data.results[0]);
+// console.log("after", movie);
+
+const result = data.results.map((m) => {
+  return {
+    fghjk: m.original_title
+  };
+});
+
+console.log(result);
+
+
+4. On peut mettre props mais ça évite de faire props.selectMovie.title...
+Donc il vaut mieux mettre le nom du composant crée dans app.js au lieu de prop (+ rapide)
+Exemple : 
+const MovieDetails = ({ selectedMovie }) => {
+    return <div id="movie-details-modal" className="modal fade">
+      <div className="modal-dialog">
+        <div className="modal-content">
+   
+5. SCSS = CSS amélioré : permet de créer des variable dynamique et + performance que le CSS.
+
+6. Dans app.js  import { MovieDetails, MovieList } from "./features/movies/components";
+Permet d'importer des composants. Evite de mettre tout le code dans app.js. Système python 1 fichier = 1 fonction et app.js fonction principale qui appelle les petites fonctions.
+
+7.   This.state permet demettreà jour un composant.
+Sur réact js un composant à une vie. Sauf que si on le met à jour, react JS ne le met pas à jour automatique et donc affiche le même composant mais avec les anciennes données.
+Exemple sur app.js : On doit mettre à jour les ID movies pour les petites composants (dans les autres fichiers).
+updateSelected = (idMovie) => {
+    const movie = this.state.movies.find(m => m._id === idMovie);
+    this.setState({ selected: movie });
+  }
+
+8. Dans app.js, render permet d'afficher nos infos.
+<MovieList et <MovieDetails fait appel aux petits composants Movie List et MovieDetail qui se trouve dans des autres fichiers distincts.
+Et donne des arguments . Les arguments sont des fonctions dans App.js.
+Pour faire simple : Render = main() en python. Movielist = fait appels à à la fonction  qui se trouvee dans un autre fichier et lui donne des args pour faire sa tembouille.
+
+Exempel APP.js :
+  render() {
+    return (
+      <div className="App">
+        <Header />
+        { this.state.movies.length ?<> 
+          <MovieList updateSelected={this.updateSelected} movies={this.state.movies} />
+          <MovieDetails selectedMovie={this.state.selected} />
+          </>
+          :<Loading />
+        }
+        
+      </div>
+    );
+  }
+}
+
+9. EN JSX si il y a deux nom de composants au même niveau, ça va marquer une erreur. Il faut donc mettre des <> Composant 1, composant 2</> pour que ça fonctionne.
+<> 
+          <MovieList updateSelected={this.updateSelected} movies={this.state.movies} />
+          <MovieDetails selectedMovie={this.state.selected} />
+          </>
+
+
+10.      <Router>
+Routeur un seul apr application et permet de gérer les roots.
+Exemple dans app.js
+
+import {BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
+
+const One =() => <h1> One</h1>
+const Two =() => <h1> Two</h1>
+const Three =() => <h1> Three</h1>
+
+ render() {
+    return (
+      <div className="App">
+      <Router>
+          <Link to="/one"> One</Link>
+          <Link to="/two"> Two</Link>
+          <Link to="/two/three"> Three</Link>
+          <Route exact path="/one" component={One} />
+          <Route path="/two" component={Two} />
+          <Route path="/two/three" component={Three} />
+      </Router>
+      </div>
+    );
+  }
+}
+
+Le rooter va regarder toutes les root qui match avec les composants et s'arrete au premier composant qui match
+Cepend si on a two/three ca va lire le composant route path two et celui imagine path two/three
+Pour que l'on veut juste path two, il faut ajouter exact. <Route excact).
+
+11. Comment fonctionne react JS :
+  -Appel component (code base reactJS)
+  -Appel class app
+  -Appel render
+  -Appel la fonction componentDidMount() 
+  -Rappelrender
+
+
+12. props dans la redirection :
+
+const names = ['Coco', 'Jaco', 'Pedro', 'Emilie'];
+
+sayHello('Coucou', ...names);
+
+function sayHello(greeting, ...args) {
+  console.log(arguments);
+  args.forEach(n => {
+    console.log(greeting, n);
+  });
+}
+
+test(12, 89, true);
+
+function test() {
+  console.log(arguments);
+}
+
+
+
+BD sauvegarde APP.js dans render :
+
+        <Header />
+        {this.state.movies.length ?
+          <>
+          <div className="d-flex justify-content-center p-4"> 
+          <SearchBar />
+          </div>
+
+            <MovieList
+              updateSelected={this.updateSelected}
+              movies={this.state.movies} />
+            <MovieDetails selectedMovie={this.state.selected} />
+          </>
+        :
+          <Loading />
+        }
